@@ -7,52 +7,52 @@
 <img src="./public/images/high_level_design.png" />
 ## Routes
 ### Public
-#### User details management
->> a. Sign up
-    - Receive - email, firstName, lastName, password
+#### User details management 
+>> a. Sign up 
+    1.  Receive - email, firstName, lastName, password 
         i. Check if email exists
         ii. Encrypt password
         iii. Generate 6-digit verification code
         iv. Insert user candidate into DB
         v. Send verification link to registered email
-    - Return - success message or error message
+    2.  Return - success message or error message
 >> b. Verify email
-		- Receive verification code
-                i. Retrieve 6-digit verification code from request
-                ii. Retrieve verification code from user table
-                iii. Compare verification codes
-                iv. Update user table set verified to true
-		- Return success message
+		1. Receive verification code
+            i. Retrieve 6-digit verification code from request
+            ii. Retrieve verification code from user table
+            iii. Compare verification codes
+            iv. Update user table set verified to true
+		2. Return success message
 >> c. Resend verification link
-		- Receive - email address
-			i. Check if email is registered
+		1. Receive - email address
+            i. Check if email is registered
             ii. Generate 6-digit integer
             iii. Update users table with new code
             iv. Send code to email
-		return error message
+		2. return error message
 >> d. Login
-		- Receives email and password.
+		1. Receives email and password.
             i. Fetch password from user table using email
             ii. Compare DB password with received password
             iii. Generate a refresh_token, you can use UUIDV4, with 24hr expiry
             iv. Insert session info into session table
             v. Generate JWT token using email and sessionID as payload
             vi. Return access_token, refresh_token 
-		- Returns access_token, refresh_token or error message.
+		2. Returns access_token, refresh_token or error message.
 >> e. Logout
-        - Retrieve sessionID from request
+        1. Retrieve sessionID from request
             1. Set refresh_token as null
             2. Update session table, set is_valid to false
-        - End session
+        2. End session
 ### Private
 #### Session management
 	a. Renew token
-		Receives refresh_token
-        1. Fetch refresh_token from sessions table
-        2. Check that refresh_token is valid
-        3. Compare refresh_token to received token
-        4. Generate new JWT access_token using email and sessionID 
-		5. Returns new access_token
+		i. Receives refresh_token
+            1. Fetch refresh_token from sessions table
+            2. Check that refresh_token is valid
+            3. Compare refresh_token to received token
+            4. Generate new JWT access_token using email and sessionID 
+            5. Returns new access_token
 ### Middleware
     a. Check authentication
         1. Retrieve access_token from request header
@@ -64,7 +64,7 @@
 ### Frontend
     a. Track age of token
     b. Track last seen
-        If age of token is nearing maxAgeOfToken = 1hr ( 50 min < ageOfToken < 55min ):
+        `If age of token is nearing maxAgeOfToken = 1hr ( 50 min < ageOfToken < 55min ):
             If lastSeen < 50minutes:
                 Request new token using refresh_token
                 reset age of token
@@ -73,7 +73,7 @@
         else if ageOfToken > 55 minutes:
             If lastSeen >= 50 minutes:
                 logoutUser
-                Call logout endpoint
+                Call logout endpoint`
             
 
 ## Data Model
