@@ -3,69 +3,72 @@
     - Tracks session token expiry
     - Auto-requests for new token using refresh token
     - Logs user out in case of too long inactivity periods
->> High level Design
-<img src="./public/images/high_level_design.png" />
+## High level Design
+
+<img src="./public/images/high_level_design.png" ></img>
+
 ## Routes
 ### Public
-#### User details management 
->> a. Sign up 
+### User details management 
++ a. Sign up 
     1.  Receive - email, firstName, lastName, password 
-        i. Check if email exists
-        ii. Encrypt password
-        iii. Generate 6-digit verification code
-        iv. Insert user candidate into DB
-        v. Send verification link to registered email
-    2.  Return - success message or error message
->> b. Verify email
-		1. Receive verification code
-            i. Retrieve 6-digit verification code from request
-            ii. Retrieve verification code from user table
-            iii. Compare verification codes
-            iv. Update user table set verified to true
-		2. Return success message
->> c. Resend verification link
-		1. Receive - email address
-            i. Check if email is registered
-            ii. Generate 6-digit integer
-            iii. Update users table with new code
-            iv. Send code to email
-		2. return error message
->> d. Login
-		1. Receives email and password.
-            i. Fetch password from user table using email
-            ii. Compare DB password with received password
-            iii. Generate a refresh_token, you can use UUIDV4, with 24hr expiry
-            iv. Insert session info into session table
-            v. Generate JWT token using email and sessionID as payload
-            vi. Return access_token, refresh_token 
-		2. Returns access_token, refresh_token or error message.
->> e. Logout
-        1. Retrieve sessionID from request
-            1. Set refresh_token as null
-            2. Update session table, set is_valid to false
-        2. End session
+        * Check if email exists
+        * Encrypt password
+        * Generate 6-digit verification code
+        * Insert user candidate into DB
+        * Send verification link to registered email
+    2. Return - success message or error message
++ b. Verify email
+    1. Receive verification code
+        * Retrieve 6-digit verification code from request
+        * Retrieve verification code from user table
+        * Compare verification codes
+        * Update user table set verified to true
+    2. Return success message
++ Resend verification link
+    1. Receive - email address
+        * Check if email is registered
+        * Generate 6-digit integer
+        * Update users table with new code
+        * Send code to email
+    2. return error message
++ Login
+    1. Receives email and password.
+        * Fetch password from user table using email
+        * Compare DB password with received password
+        * Generate a refresh_token, you can use UUIDV4, with 24hr expiry
+        * Insert session info into session table
+        * Generate JWT token using email and sessionID as payload
+        * Return access_token, refresh_token 
+    2. Returns access_token, refresh_token or error message.
++ Logout
+    1. Retrieve sessionID from request
+        * Set refresh_token as null
+        * Update session table, set is_valid to false
+    2. End session
 ### Private
 #### Session management
-	a. Renew token
-		i. Receives refresh_token
-            1. Fetch refresh_token from sessions table
-            2. Check that refresh_token is valid
-            3. Compare refresh_token to received token
-            4. Generate new JWT access_token using email and sessionID 
-            5. Returns new access_token
+* Renew token
+    1. Receives refresh_token
+        + Fetch refresh_token from sessions table
+        + Check that refresh_token is valid
+        + Compare refresh_token to received token
+        + Generate new JWT access_token using email and sessionID 
+        + Returns new access_token
 ### Middleware
-    a. Check authentication
-        1. Retrieve access_token from request header
-        2. Verify that access_token is valid
-        3. Decode access_token
-        4. Set data ( sessionID, email ) to req.locals.session
-    b. Check authorization
-    ::: To be added
+* Check authentication
+    1. Retrieve access_token from request header
+    2. Verify that access_token is valid
+    3. Decode access_token
+    4. Set data ( sessionID, email ) to req.locals.session
+* Check authorization
+    1. ::: To be added
 ### Frontend
-    a. Track age of token
-    b. Track last seen
-        `If age of token is nearing maxAgeOfToken = 1hr ( 50 min < ageOfToken < 55min ):
-            If lastSeen < 50minutes:
+* Track age of token
+* Track last seen<br/>
+    <code>
+        If age of token is nearing maxAgeOfToken = 1hr ( 50 min < ageOfToken < 55min ):<br/>
+            If lastSeen < 50minutes:<br/>
                 Request new token using refresh_token
                 reset age of token
             Else:
@@ -73,7 +76,9 @@
         else if ageOfToken > 55 minutes:
             If lastSeen >= 50 minutes:
                 logoutUser
-                Call logout endpoint`
+                Call logout endpoint
+    </code>
+    
             
 
 ## Data Model
