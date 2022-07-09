@@ -5,4 +5,4 @@ const config = {
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
 };
 
-export default config;
+module.exports = config;
